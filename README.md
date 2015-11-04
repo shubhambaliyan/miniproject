@@ -1,4 +1,3 @@
-# miniproject
 #include<string.h>
 #include<stdio.h>
 #include<conio.h>
@@ -9,8 +8,14 @@
     char lables[20];
     int value;
 };
+struct assembler
+{
+    char label[20];
+    char mnemonic[20];
+    char operand[20];
+};
      struct symtab s[10];
-     char label[20],mnemonic[20],operand[20];
+     struct assembler asmb[20];
      int locctr=1000,n,i,a=0,j=0;
      int temp;
      FILE *fp, *fptr;
@@ -31,22 +36,22 @@
      for(i=0;i<n;i++)
      {
          a:
-               scanf("%s\t%s\t%s",label, mnemonic,operand);
-               if(strcmp(label,"lab1")==0 || strcmp(label,"lab2")==0 || strcmp(label,"lab3")==0 || strcmp(label,"lab4")==0 || strcmp(label,"lab5")==0 || strcmp(label,"lab6")==0 ||
-                  strcmp(label,"lab6")==0 ||strcmp(label,"-")==0)
+               scanf("%s\t%s\t%s",asmb[i].label, asmb[i].mnemonic,asmb[i].operand);
+               if(strcmp(asmb[i].label,"lab1")==0 || strcmp(asmb[i].label,"lab2")==0 || strcmp(asmb[i].label,"lab3")==0 || strcmp(asmb[i].label,"lab4")==0 || strcmp(asmb[i].label,"lab5")==0 || strcmp(asmb[i].label,"lab6")==0 ||
+                  strcmp(asmb[i].label,"lab6")==0 ||strcmp(asmb[i].label,"-")==0)
                {
-               if (strcmp(mnemonic,"lda")==0 || strcmp(mnemonic,"sta")==0 ||strcmp(mnemonic,"stl")==0 ||strcmp(mnemonic,"comp")==0 ||strcmp(mnemonic,"jeq")==0 ||strcmp(mnemonic,"ldx")==0
-                ||strcmp(mnemonic,"ldch")==0 ||strcmp(mnemonic,"jlt")==0 ||strcmp(mnemonic,"add")==0 ||strcmp(mnemonic,"sub")==0 ||strcmp(mnemonic,"stx")==0)
+               if (strcmp(asmb[i].mnemonic,"lda")==0 || strcmp(asmb[i].mnemonic,"sta")==0 ||strcmp(asmb[i].mnemonic,"stl")==0 ||strcmp(asmb[i].mnemonic,"comp")==0 ||strcmp(asmb[i].mnemonic,"jeq")==0 ||strcmp(asmb[i].mnemonic,"ldx")==0
+                ||strcmp(asmb[i].mnemonic,"ldch")==0 ||strcmp(asmb[i].mnemonic,"jlt")==0 ||strcmp(asmb[i].mnemonic,"add")==0 ||strcmp(asmb[i].mnemonic,"sub")==0 ||strcmp(asmb[i].mnemonic,"stx")==0)
 
 
 
                   {
-                   if(strcmp(operand,"lab1")==0 || strcmp(operand,"lab2")==0 || strcmp(operand,"lab3")==0 || strcmp(operand,"lab4")==0 || strcmp(operand,"lab5")==0 || strcmp(operand,"lab6")==0 ||
-                  strcmp(operand,"lab6")==0 )
+                   if(strcmp(asmb[i].operand,"lab1")==0 || strcmp(asmb[i].operand,"lab2")==0 || strcmp(asmb[i].operand,"lab3")==0 || strcmp(asmb[i].operand,"lab4")==0 || strcmp(asmb[i].operand,"lab5")==0 || strcmp(asmb[i].operand,"lab6")==0 ||
+                  strcmp(asmb[i].operand,"lab6")==0 )
                   {
 
-             fprintf(fp,"%d\t%s\t%s\t%s\n",locctr,label,mnemonic,operand);
-             strcpy(s[i].lables,label);
+             fprintf(fp,"%d\t%s\t%s\t%s\n",locctr,asmb[i].label,asmb[i].mnemonic,asmb[i].operand);
+             strcpy(s[i].lables,asmb[i].label);
              s[i].value=locctr;
             locctr=locctr+3;
                   }
@@ -77,9 +82,17 @@
      printf("symtab is:\n ");
      for(i=0;i<n;i++)
      {
-         printf("%s\t\t%d",&s[i].lables,s[i].value);
-         fprintf(fp,"%s\t\t%d",&s[i].lables,s[i].value);
+         printf("%s\t\t%d",s[i].lables,s[i].value);
+         if(strcmp(s[i].lables,"-")==0)
+         {
+
+         }
+         else
+         {
+             printf("%s\t\t%d",s[i].lables,s[i].value);
+         fprintf(fp,"%s\t\t%d",s[i].lables,s[i].value);
          printf("\n");
+         }
      }
      fclose(fp);
 
