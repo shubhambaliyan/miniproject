@@ -16,8 +16,9 @@ struct assembler
 };
      struct symtab s[10];
      struct assembler asmb[20];
-     int locctr=1000,n,i,j,c=0,d;
-     int temp,position;
+     char p[20],q,prog_name[20];
+     int locctr,n,i,c=0,d,first_time_copy=0;
+     int temp,j=0,symtab_entry=0,k,size_of_symtab=0;
      char temp_mnemonic[6],a[10];
      FILE *fp, *fptr,*fpp;
 
@@ -32,15 +33,20 @@ struct assembler
      printf(" program in assembly language \n");
 
      fp=fopen("d:\\temp.txt","w");
+    
      printf(" \n enter no. of instruction u want to write");
      scanf("%d",&n);
+     printf("enter program name \n");
+      scanf("%s %d",prog_name,&locctr);
+      printf("%s",prog_name);
+     printf(" START");
+     printf("%d\n",locctr);
      for(i=0;i<n;i++)
      {
          d:
          	    c=0;
          	     fpp=fopen("d:\\op.txt","r");
                scanf("%s\t%s\t%s",asmb[i].label, asmb[i].mnemonic,asmb[i].operand);
-                //printf("%s\t%s\t%s",asmb[i].label, asmb[i].mnemonic,asmb[i].operand);
                if(strcmp(asmb[i].label,"LAB1")==0 || strcmp(asmb[i].label,"LAB2")==0 || strcmp(asmb[i].label,"LAB3")==0 || strcmp(asmb[i].label,"LAB4")==0 || strcmp(asmb[i].label,"LAB5")==0 || strcmp(asmb[i].label,"LAB6")==0 ||
                   strcmp(asmb[i].label,"LAB6")==0 ||strcmp(asmb[i].label,"-")==0)
                {
@@ -48,7 +54,6 @@ struct assembler
                        {
 
                        	fscanf(fpp,"%s  %s",temp_mnemonic,a);
-                       	//printf("\n%s",temp_mnemonic);
                        	if(strcmp(temp_mnemonic,asmb[i].mnemonic)==0)
                        	{
                        		c=1;
@@ -64,14 +69,55 @@ struct assembler
                        	goto d;
                        }
                    if(strcmp(asmb[i].operand,"LAB1")==0 || strcmp(asmb[i].operand,"LAB2")==0 || strcmp(asmb[i].operand,"LAB3")==0 || strcmp(asmb[i].operand,"LAB4")==0 || strcmp(asmb[i].operand,"LAB5")==0 || strcmp(asmb[i].operand,"LAB6")==0 ||
-                  strcmp(asmb[i].operand,"LAB6")==0 )
+                  strcmp(asmb[i].operand,"LAB6")==0 || strcmp(asmb[i].operand,"-")==0 )
                   {
 
-             fprintf(fp,"%d\t%s\t%s\t%s\n",locctr,asmb[i].label,asmb[i].mnemonic,asmb[i].operand);
-             strcpy(s[i].lables,asmb[i].label);
-             s[i].value=locctr;
+
+         if(strcmp(asmb[i].label,"-")!=0)
+         {
+             if(first_time_copy==0)
+             {
+             	 fprintf(fp,"%d\t%s\t%s\t%s\n",locctr,asmb[i].label,asmb[i].mnemonic,asmb[i].operand);
+             strcpy(s[j].lables,asmb[i].label);
+             s[j].value=locctr;
+              printf("\n");
+              first_time_copy=1;
+              j++;
+              size_of_symtab++;
+            }
+            else
+            {
+              for(k=0;k<size_of_symtab;k++)
+              {
+              	printf("for loop\n");
+              	symtab_entry=1;
+            
+              	if(strcmp(asmb[i].label,s[k].lables)==0)
+              	{
+              		printf("lable defined in symtab \n");
+              		printf("please input apropriate lable");
+              		goto d;
+              		break;
+              	}
+              }
+              if(symtab_entry==1)
+              {
+              	 fprintf(fp,"%d\t%s\t%s\t%s\n",locctr,asmb[i].label,asmb[i].mnemonic,asmb[i].operand);
+              	strcpy(s[j].lables,asmb[i].label);
+              	s[j].value=locctr;
+              	size_of_symtab++;
+              	j++;
+              }
+            }
             locctr=locctr+3;
-                  }
+        }
+        else
+        {
+        	 fprintf(fp,"%d\t%s\t%s\t%s\n",locctr,asmb[i].label,asmb[i].mnemonic,asmb[i].operand);
+        	locctr=locctr+3;
+        }
+        
+    }
                  else
                {
                    printf("operand not defined for assembler \n");
@@ -88,23 +134,16 @@ struct assembler
               goto d;
           }
      }
+
      fclose(fp);
      fclose(fpp);
-     fptr=fopen("d:\\symtab.txt","w");
-     for(i=0;i<n;i++)
+     printf("\n symtab is: \n  ");
+     for(j=0;j<size_of_symtab;j++)
      {
-         if(strcmp(s[i].lables,"-")==0)
-         {
-
-         }
-         else
-         {
-         	printf("%s\t\t%d",s[i].lables,s[i].value);
-         fprintf(fptr,"%s\t\t%d\n",s[i].lables,s[i].value);
-         printf("\n");
-         }
+     	printf("%s\t%d",s[j].lables,s[j].value);
+     	printf("\n");
      }
-     fclose(fptr);
+    
 
       getch();
  }
