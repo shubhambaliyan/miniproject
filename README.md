@@ -18,7 +18,7 @@ struct assembler
      struct assembler asmb[20];
      char prog_name[10],opcode;
      int locctr,n,i,c=0,d,first_time_copy=0,add;
-     int temp,j=0,symtab_entry=0,k,size_of_symtab=0;
+     int temp,j=0,symtab_entry=0,k,size_of_symtab=0,starting_address,ending_address,program_length;
      char temp_mnemonic[6],a[10],ch1[20],ch2[20],ch3[20];
      FILE *fp, *fptr,*fpp;
 
@@ -36,11 +36,14 @@ struct assembler
     
      printf(" \n enter no. of instruction u want to write");
      scanf("%d",&n);
-     printf("enter program name and starting address\n");
-      scanf("%s %x",prog_name,&locctr);
+     printf("enter program name \n");
+      scanf("%s",prog_name);
+      printf("please input  starting address\n");
+      scanf("%x",&locctr);
       printf("%s\t",prog_name);
      printf("START \t");
      printf("%x\n",locctr);
+     starting_address=locctr;
      for(i=0;i<n;i++)
      {
          d:
@@ -69,11 +72,16 @@ struct assembler
                          fclose(fpp);
                        	goto d;
                        }
-                   if(strcmp(asmb[i].operand,"LAB1")==0 || strcmp(asmb[i].operand,"LAB2")==0 || strcmp(asmb[i].operand,"LAB3")==0 || strcmp(asmb[i].operand,"LAB4")==0 || strcmp(asmb[i].operand,"LAB5")==0 || strcmp(asmb[i].operand,"LAB6")==0 ||
-                  strcmp(asmb[i].operand,"LAB6")==0 || strcmp(asmb[i].operand,"-") )
-                  {
                        
-        if(strcmp(asmb[i].label,"-")!=0)
+                       if(strcmp(asmb[i].mnemonic,"RESW")==0 || strcmp(asmb[i].mnemonic,"RESB")==0 ||  strcmp(asmb[i].mnemonic,"WORD")==0 || strcmp(asmb[i].mnemonic,"BYTE")==0  )  
+                       goto asmb_label2;
+                       
+                   if(strcmp(asmb[i].operand,"LAB1")==0 || strcmp(asmb[i].operand,"LAB2")==0 || strcmp(asmb[i].operand,"LAB3")==0 || strcmp(asmb[i].operand,"LAB4")==0 || strcmp(asmb[i].operand,"LAB5")==0 || strcmp(asmb[i].operand,"LAB6")==0 ||
+                  strcmp(asmb[i].operand,"LAB6")==0 || strcmp(asmb[i].operand,"-") ==0)
+                  {
+      asmb_label2:  
+	                 
+          if(strcmp(asmb[i].label,"-")!=0)
          {
              if(first_time_copy==0)
              {
@@ -115,6 +123,10 @@ struct assembler
             {
             	locctr=locctr+3*atoi(asmb[i].operand);
             }
+             else if(strcmp(asmb[i].mnemonic,"BYTE")==0)
+             { 
+             	locctr=locctr+strlen(asmb[i].operand);
+             }
             else
             {
             
@@ -123,8 +135,23 @@ struct assembler
     }
         else
         {
-        	 fprintf(fp,"\t%x\t%s\t%s\t%s\n",locctr,asmb[i].label,asmb[i].mnemonic,asmb[i].operand);
+        	fprintf(fp,"\t%x\t%s\t%s\t%s\n",locctr,asmb[i].label,asmb[i].mnemonic,asmb[i].operand);
+		 if(strcmp(asmb[i].mnemonic,"RESB")==0)
+            {
+            	locctr=locctr+atoi(asmb[i].operand);
+            }
+            else if(strcmp(asmb[i].mnemonic,"RESW")==0)
+            {
+            	locctr=locctr+3*atoi(asmb[i].operand);
+            }
+            else if(strcmp(asmb[i].mnemonic,"BYTE")==0)
+             { 
+             	locctr=locctr+strlen(asmb[i].operand);
+             }
+            else
+            {
         	locctr=locctr+3;
+            }
         }
         
     }
@@ -147,6 +174,7 @@ struct assembler
 
      fclose(fp);
      fclose(fpp);
+     	ending_address=locctr;
       printf(" END");
      printf("\t%x",locctr);
      printf("\n symtab is: \n  ");
@@ -166,13 +194,13 @@ struct assembler
      while(fscanf(fptr,"\t%x\t%s\t%s\t%s",&add,ch1,ch2,ch3)!=EOF)
      {
      	printf("%x\t%s\t%s\t%s",add,ch1,ch2,ch3);
-     	if(strcmp(ch2,"RESW")==0)
+     	if(strcmp(ch2,"RESW")==0 || strcmp(ch2,"RESB")==0 || strcmp(ch2,"WORD")==0)
      	{
-     		printf("\n no machine code defined ");
+     		printf("\n  machine code doesn't exist \n ");
      	}
-     	else if(strcmp(ch2,"RESB")==0)
+     	else if(strcmp(ch2,"BYTE") ==0)
      	{
-     		printf("\n no machine code defined");
+     		printf("\n%d",asmb[i].operand);
      	}
      	else
      	{
@@ -201,6 +229,8 @@ struct assembler
      }
 	 fclose(fptr);
 	 fclose(fpp);
+	 program_length= (ending_address-starting_address);
+	 
 
       getch();
  }
