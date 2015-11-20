@@ -14,6 +14,7 @@ struct assembler
     char mnemonic[20];
     char operand[20];
 };
+
      struct symtab s[10];
      struct assembler asmb[20];
      char prog_name[10],opcode;
@@ -73,7 +74,7 @@ struct assembler
                        	goto d;
                        }
                        
-                       if(strcmp(asmb[i].mnemonic,"RESW")==0 || strcmp(asmb[i].mnemonic,"RESB")==0 ||  strcmp(asmb[i].mnemonic,"WORD")==0 || strcmp(asmb[i].mnemonic,"BYTE")==0  )  
+                       if(strcmp(asmb[i].mnemonic,"RESW")==0 || strcmp(asmb[i].mnemonic,"RESB")==0 ||  strcmp(asmb[i].mnemonic,"WORD")==0  )  
                        goto asmb_label2;
                        
                    if(strcmp(asmb[i].operand,"LAB1")==0 || strcmp(asmb[i].operand,"LAB2")==0 || strcmp(asmb[i].operand,"LAB3")==0 || strcmp(asmb[i].operand,"LAB4")==0 || strcmp(asmb[i].operand,"LAB5")==0 || strcmp(asmb[i].operand,"LAB6")==0 ||
@@ -123,10 +124,6 @@ struct assembler
             {
             	locctr=locctr+3*atoi(asmb[i].operand);
             }
-             else if(strcmp(asmb[i].mnemonic,"BYTE")==0)
-             { 
-             	locctr=locctr+strlen(asmb[i].operand);
-             }
             else
             {
             
@@ -144,10 +141,6 @@ struct assembler
             {
             	locctr=locctr+3*atoi(asmb[i].operand);
             }
-            else if(strcmp(asmb[i].mnemonic,"BYTE")==0)
-             { 
-             	locctr=locctr+strlen(asmb[i].operand);
-             }
             else
             {
         	locctr=locctr+3;
@@ -177,6 +170,7 @@ struct assembler
      	ending_address=locctr;
       printf(" END");
      printf("\t%x",locctr);
+     program_length= (ending_address-starting_address);
      printf("\n symtab is: \n  ");
      for(j=0;j<size_of_symtab;j++)
      {
@@ -187,7 +181,11 @@ struct assembler
      
      fptr=fopen("d:\\temp.txt","r");
      fpp=fopen("d:\\op.txt","r");
-    i=0;
+     fp=fopen("d:\\object_program.txt","w");
+     fprintf(fp,"H^");
+     fprintf(fp,"%s^",prog_name);
+     fprintf(fp,"%x^%d",starting_address,program_length);
+     i=0;
     printf("\t\t step 2\n\n ");
     printf("machine code(in hex) is:\n\n");
     
@@ -198,10 +196,6 @@ struct assembler
      	{
      		printf("\n  machine code doesn't exist \n ");
      	}
-     	else if(strcmp(ch2,"BYTE") ==0)
-     	{
-     		printf("\n%d",asmb[i].operand);
-     	}
      	else
      	{
      	while(!feof(fpp))
@@ -210,7 +204,7 @@ struct assembler
      	
      		if(strcmp(temp_mnemonic,ch2)==0)
      		{
-     			printf("\n%s",a);
+     			printf("\n\n%s",a);
      			break;
      		}
      	}
@@ -221,15 +215,17 @@ struct assembler
      		{
      			printf("%x",s[j].value);
      		}
+     		
      	}
      }
      	
      	
      	printf("\n");
+     	i++;
      }
 	 fclose(fptr);
 	 fclose(fpp);
-	 program_length= (ending_address-starting_address);
+	 
 	 
 
       getch();
