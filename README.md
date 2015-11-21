@@ -132,14 +132,16 @@ struct assembler
     }
         else
         {
-        	fprintf(fp,"\t%x\t%s\t%s\t%s\n",locctr,asmb[i].label,asmb[i].mnemonic,asmb[i].operand);
+        	fprintf(fp,"%x\t%s\t%s\t%s\n",locctr,asmb[i].label,asmb[i].mnemonic,asmb[i].operand);
 		 if(strcmp(asmb[i].mnemonic,"RESB")==0)
             {
             	locctr=locctr+atoi(asmb[i].operand);
+            	
             }
             else if(strcmp(asmb[i].mnemonic,"RESW")==0)
             {
             	locctr=locctr+3*atoi(asmb[i].operand);
+            	
             }
             else
             {
@@ -184,17 +186,23 @@ struct assembler
      fp=fopen("d:\\object_program.txt","w");
      fprintf(fp,"H^");
      fprintf(fp,"%s^",prog_name);
-     fprintf(fp,"%x^%d",starting_address,program_length);
+     fprintf(fp,"%x^%d\n",starting_address,program_length);
      i=0;
     printf("\t\t step 2\n\n ");
     printf("machine code(in hex) is:\n\n");
-    
+    fprintf(fp,"T");
      while(fscanf(fptr,"\t%x\t%s\t%s\t%s",&add,ch1,ch2,ch3)!=EOF)
      {
      	printf("%x\t%s\t%s\t%s",add,ch1,ch2,ch3);
      	if(strcmp(ch2,"RESW")==0 || strcmp(ch2,"RESB")==0 || strcmp(ch2,"WORD")==0)
      	{
      		printf("\n  machine code doesn't exist \n ");
+     		fprintf(fp,"\n");
+     		if(!feof(fptr))
+     		 fprintf(fp,"T");
+     		 else if(feof(fptr))
+     		 fprintf(fp,"\n");
+
      	}
      	else
      	{
@@ -205,6 +213,7 @@ struct assembler
      		if(strcmp(temp_mnemonic,ch2)==0)
      		{
      			printf("\n\n%s",a);
+     			fprintf(fp,"^%s",a);
      			break;
      		}
      	}
@@ -214,15 +223,19 @@ struct assembler
      		if(strcmp(ch3,s[j].lables)==0)
      		{
      			printf("%x",s[j].value);
+     			fprintf(fp,"%x",s[j].value);
+     			 break;
      		}
      		
      	}
+     	i++;
      }
      	
      	
      	printf("\n");
-     	i++;
      }
+     fprintf(fp,"\nE^");
+     fprintf(fp,"%x",starting_address);
 	 fclose(fptr);
 	 fclose(fpp);
 	 
